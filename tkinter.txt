@@ -1,0 +1,22 @@
+----------------MTO transmittal
+highlight/display newly-added row
+add required parameters to input fields
+highlight "insert row" button when selected
+select data and then modify its content (prolly need to rewrite/re-conceptualize the whole app, tho)
+change db to sql instead of excel
+select sheet to work with
+ or
+add a dropdown option to select gen, sef, trust, 20%
+
+
+
+
+
+
+
+
+
+----------------others
+tabbed-UI for working on different files, perhaps? ...but that's a story for another "what if"
+
+
