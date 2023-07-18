@@ -2,7 +2,10 @@ import tkinter as tk
 from tkinter import ttk
 
 root = tk.Tk()
+<<<<<<< HEAD
 root.title('MTO Check Transmittal')
+=======
+>>>>>>> 1923a59b1d0c74029198ca36d4906e3472303a3b
 
 style = ttk.Style(root)
 root.tk.call("source", "forest-light.tcl")
@@ -120,7 +123,10 @@ def insert_row():
 
 button = ttk.Button(widgets_frame, text="Insert", command=insert_row)
 button.grid(row=7, column=0, sticky="nsew")
+<<<<<<< HEAD
 '''buttons have another parameter "state", "fg" & "bg". Just google it if you need them applied to certain app logic'''
+=======
+>>>>>>> 1923a59b1d0c74029198ca36d4906e3472303a3b
 
 ### separator ###
 separator = ttk.Separator(widgets_frame)
@@ -183,7 +189,11 @@ def load_data():
     workbook = openpyxl.load_workbook(path)
     sheet = workbook.active
     list_values = list(sheet.values)
+<<<<<<< HEAD
     # print(list_values) # to see the data inside the active sheet of the excel file
+=======
+    print(list_values) # to see the data inside the active sheet of the excel file
+>>>>>>> 1923a59b1d0c74029198ca36d4906e3472303a3b
     for col_name in list_values[0]:
         # this loop gets the first "values" on the excel sheet (ie: headings of the columns)
         # those will then be set as the headings on the tkinter UI
