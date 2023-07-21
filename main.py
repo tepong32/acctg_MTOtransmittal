@@ -73,9 +73,109 @@ check_status_dropdown = ttk.Combobox(widgets_frame, values=status_list)
 check_status_dropdown.current(0) # default selected value
 check_status_dropdown.grid(row=1, column=5,padx=5, pady=(0,5), sticky="ew")
 
-### separator line###
-separator = ttk.Separator(widgets_frame, )
-separator.grid(row=2, columnspan=10, padx=20, pady=10, sticky="ew")
+
+def insert_row():
+    '''
+     This function is the one where user input will be added to the excel file
+     and displayed on the UI.
+     It is composed of three parts:
+    '''
+    # retrieving data and assigning variables to them
+    checkDate = check_date.get()
+    checkNumber = check_number.get()
+    dvNumber = dv_number.get()
+    checkParticulars = check_particulars.get()
+    checkAmount = check_amount.get()
+    checkStatus = check_status_dropdown.get()
+    print(checkDate, checkNumber, dvNumber, checkParticulars, checkAmount, checkStatus)
+
+    # inserting the row to the excel file
+    path = r"C:\Users\Administrator\Desktop\Github\acctg_MTOtransmittal\data.xlsx"
+    workbook = openpyxl.load_workbook(path)
+    sheet = workbook.active
+    row_values = [checkDate, checkNumber, dvNumber, checkParticulars, checkAmount, checkStatus]
+    sheet.append(row_values)
+    workbook.save(path)
+
+    # displaying the inserted row on the UI (treeView)
+    treeView.insert('', tk.END, values=row_values)
+
+    # clear the values after inserting the new row
+    # and then resetting the values to default
+    check_date.delete(0, "end")
+    # name_entry.insert(0, "Name") # setting "help text" on entry widget if needed
+
+    check_number.delete(0, "end")
+    dv_number.delete(0, "end")
+    check_particulars.delete(0, "end")
+    check_amount.delete(0, "end")
+    check_status_dropdown.set(status_list[0])
+    check_date.focus_set()
+    
+
+button = ttk.Button(widgets_frame, text="Insert", command=insert_row) # calling the insert_row function above
+button.grid(row=4, column=3, sticky="nsew")
+
+
+### separator line (removed) ###############################################
+# separator = ttk.Separator(widgets_frame, )
+# separator.grid(row=2, columnspan=10, padx=20, pady=10, sticky="ew")
+
+################## TreeView / Excel LabelFrame ####################################
+### This is where the preview of the excel file's data will be displayed
+
+### Display Frame
+treeFrame = ttk.Frame(outer_frame)
+treeFrame.grid(row=5, column=0, pady=10)
+treeScroll = ttk.Scrollbar(treeFrame)
+treeScroll.pack(side="right", fill="y") # this sets the scrollbar to the right side of the frame,
+                                        # covering its whole height
+
+cols = ("Check Date", "Check #", "DV #","Particulars", "Amount", "Status") # column of the preview related to the excel file
+treeView = ttk.Treeview(treeFrame, show="headings", 
+                        yscrollcommand=treeScroll.set, columns=cols, height=15)
+# these set the width of the columns specifically
+# COLUMN NAMES SHOULD MATCH THOSE INDICATED ON THE EXCEL FILE
+treeView.column("Check Date", width=100)
+treeView.column("Check #", width=100)
+treeView.column("DV #", width=100)
+treeView.column("Particulars", width=200)
+treeView.column("Amount", width=100)
+treeView.column("Status", width=80)
+treeView.pack()
+treeScroll.config(command=treeView.yview) # this line attaches the treeScroll widget to the treeView, scrolling vertically
+
+
+# Event Listener function highlighting selected items on the treeView list
+def selected():
+    print(listbox.get(listbox.curselection()[0]))
+    
+treeView.bind("<<ListboxSelect>>", lambda x: selected())   
+
+
+### attaching the excel file to the UI starts here:
+import openpyxl
+
+def load_data():
+    # used prefix (r) to avoid unicodeescape error
+    # see https://stackoverflow.com/questions/1347791/unicode-error-unicodeescape-codec-cant-decode-bytes-cannot-open-text-file
+    path = r"C:\Users\Administrator\Desktop\Github\acctg_MTOtransmittal\data.xlsx" # windows
+    # path = r"./data.xlsx" # linux
+    workbook = openpyxl.load_workbook(path)
+    sheet = workbook.active
+    list_values = list(sheet.values)
+    # print(list_values) # to see the data inside the active sheet of the excel file
+    for col_name in list_values[0]:
+        # this loop gets the first "values" on the excel sheet (ie: headings of the columns)
+        # those will then be set as the headings on the tkinter UI
+        treeView.heading(col_name, text=col_name)
+
+    for value_tuple in list_values[1:]:
+        # starting from [1] onwards, are the data (lists) we need loaded into the treeView
+        treeView.insert('', tk.END, values=value_tuple)
+
+load_data()
+################## /TreeView / Excel LabelFrame ####################################
 
 ### switch (dark/light)
 def toggle_mode():
@@ -84,8 +184,17 @@ def toggle_mode():
     else:
         style.theme_use("forest-dark")
 
-mode_switch = ttk.Checkbutton(widgets_frame, text="Mode", style="Switch",
+mode_switch = ttk.Checkbutton(outer_frame, text="Mode", style="Switch",
     command=toggle_mode) # this triggers the toggle_mode function above
-mode_switch.grid(row=3, column=0, padx=5, pady=10, sticky="nsew")
+mode_switch.grid(row=4, column=1, padx=5, pady=10, sticky="nsew")
+
+
+
+
+
+
+# This sets the cursor to automatically be on the Check Date field whenever
+# the program runs.
+check_date.focus_set()
 
 root.mainloop()
