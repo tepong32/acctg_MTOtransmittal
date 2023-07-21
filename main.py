@@ -111,15 +111,31 @@ def insert_row():
     check_amount.delete(0, "end")
     check_status_dropdown.set(status_list[0])
     check_date.focus_set()
-    
 
-button = ttk.Button(widgets_frame, text="Insert", command=insert_row) # calling the insert_row function above
+
+
+
+
+# Defining button hover events
+### OPTIONS ARE NOT WORKING ON TTK ###################################
+def on_enter(e):
+   button.config(background='OrangeRed3', foreground= "white")
+
+def on_leave(e):
+   button.config(background= 'SystemButtonFace', foreground= 'black')
+
+# Button that calls the insert_row() above
+button = ttk.Button(widgets_frame, text="Insert", command=insert_row)
 button.grid(row=4, column=3, sticky="nsew")
 
+# Binding the hover events to the Button
+button.bind('<Enter>', on_enter)
+button.bind('<Leave>', on_leave)
 
 ### separator line (removed) ###############################################
 # separator = ttk.Separator(widgets_frame, )
 # separator.grid(row=2, columnspan=10, padx=20, pady=10, sticky="ew")
+
 
 ################## TreeView / Excel LabelFrame ####################################
 ### This is where the preview of the excel file's data will be displayed
@@ -130,7 +146,6 @@ treeFrame.grid(row=5, column=0, pady=10)
 treeScroll = ttk.Scrollbar(treeFrame)
 treeScroll.pack(side="right", fill="y") # this sets the scrollbar to the right side of the frame,
                                         # covering its whole height
-
 cols = ("Check Date", "Check #", "DV #","Particulars", "Amount", "Status") # column of the preview related to the excel file
 treeView = ttk.Treeview(treeFrame, show="headings", 
                         yscrollcommand=treeScroll.set, columns=cols, height=15)
@@ -193,7 +208,7 @@ mode_switch.grid(row=4, column=1, padx=5, pady=10, sticky="nsew")
 
 
 
-# This sets the cursor to automatically be on the Check Date field whenever
+# This sets the cursor to automatically be on the Check Date field by default whenever
 # the program runs.
 check_date.focus_set()
 
