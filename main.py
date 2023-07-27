@@ -110,6 +110,7 @@ def insert_row():
     check_particulars.delete(0, "end")
     check_amount.delete(0, "end")
     check_status_dropdown.set(status_list[0])
+    # returns the focus to the check_date widget after inserting the new row
     check_date.focus_set()
 
 
