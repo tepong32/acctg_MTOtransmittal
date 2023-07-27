@@ -8,6 +8,7 @@ file_path = ""  # Global variable to store the file path
 current_sheet = ""  # Global variable to store the selected sheet name
 widget_name_mapping = {}  # Global variable to store the mapping of widgets
 column_to_widget_mapping = {} 
+
 def load_excel_file():
     global file_path, current_sheet
     file_path = filedialog.askopenfilename(filetypes=[("Excel Files", "*.xlsx *.xlsm")])
@@ -16,7 +17,7 @@ def load_excel_file():
         load_data(file_path)
 
 def load_data(file_path):
-    global current_sheet, widget_name_mapping, column_to_widget_mapping
+    global current_sheet, widget_name_mapping
     try:
         workbook = openpyxl.load_workbook(file_path)
         sheet_names = workbook.sheetnames
@@ -25,18 +26,16 @@ def load_data(file_path):
             # If current_sheet is empty or not in sheet_names, set it to the first sheet
             current_sheet = sheet_names[0]
             
-            
         # Update the Combobox with sheet names
         sheet_dropdown["values"] = sheet_names
         sheet_dropdown.set(current_sheet)  # Set the selected sheet in the Combobox
 
         sheet = workbook[current_sheet]
-        list_values = list(sheet.values)
-        columns = list_values[0]  # Extract the column headings from the first row of the Excel file
+        list_values = list(sheet.iter_rows(values_only=True))
+        columns = list_values[0]  # Extract the column headings from the first row of the selected sheet
 
-        # Clear previous TreeView columns and headings
-        treeView.delete(*treeView.get_children())
-        treeView["columns"] = columns
+        # Update the TreeView's headings with the column headings
+        update_treeview_headings(columns)
 
         widget_name_mapping = {}
         column_to_widget_mapping = {}  # Reverse mapping: Column headings to widget names
@@ -49,15 +48,15 @@ def load_data(file_path):
                 # Update the label for the corresponding widget
                 widgets_frame.grid_slaves(row=0, column=idx)[0].config(text=col_name)
 
+        # Insert the data into the TreeView
         for value_tuple in list_values[1:]:
             treeView.insert('', tk.END, values=value_tuple)
 
         return sheet_names, column_to_widget_mapping  # Return both sheet names list and the reverse mapping
     
-    
     except openpyxl.utils.exceptions.InvalidFileException:
         print("Invalid Excel file. Please select a valid Excel file.")
-        return [], {}  # Return default values if there is an exception
+
         
 def on_sheet_select(event):
     global current_sheet
@@ -66,17 +65,19 @@ def on_sheet_select(event):
         current_sheet = selected_sheet
         load_data(file_path)  # Update the TreeView when the selected sheet changes
 
-def insert_row(column_to_widget_mapping):
+def update_treeview_headings(columns):
+    # Clear previous TreeView columns and headings
+    treeView.delete(*treeView.get_children())
+    treeView["columns"] = columns
+
+    for col_name in columns:
+        treeView.heading(col_name, text=col_name)
+        treeView.column(col_name, width=100)  # Set a default width for each column (you can adjust it as needed)
+
+
+def insert_row():
     if not column_to_widget_mapping:
         print("Error: No mapping available.")
-    # Use the reverse mapping to access widgets by their corresponding column headings
-    check_date = widgets_frame.nametowidget(column_to_widget_mapping["Check Date"])
-    check_number = widgets_frame.nametowidget(column_to_widget_mapping["Check #"])
-    dv_number = widgets_frame.nametowidget(column_to_widget_mapping["DV #"])
-    check_particulars = widgets_frame.nametowidget(column_to_widget_mapping["Particulars"])
-    check_amount = widgets_frame.nametowidget(column_to_widget_mapping["Amount"])
-    check_status_dropdown = widgets_frame.nametowidget(column_to_widget_mapping["Status"])
-
     # Retrieve data from the widgets
     checkDate = check_date.get()
     checkNumber = check_number.get()
@@ -100,7 +101,6 @@ def insert_row(column_to_widget_mapping):
 
     # clear the values after inserting the new row then resetting the values to default
     check_date.delete(0, "end")
-
     check_number.delete(0, "end")
     dv_number.delete(0, "end")
     check_particulars.delete(0, "end")
@@ -109,13 +109,11 @@ def insert_row(column_to_widget_mapping):
     # returns the focus to the check_date widget after inserting the new row
     check_date.focus_set()
 
+def on_add_button_focus(event):
+    btn_row.config(style="Active.TButton")
 
-
-
-
-
-
-
+def on_add_button_focus_out(event):
+    btn_row.config(style="TButton")
 
 
 # Create the main window
@@ -210,9 +208,16 @@ sheet_dropdown = ttk.Combobox(widgets_frame, state="readonly")
 sheet_dropdown.grid(row=4, column=5, padx=10, pady=5)
 sheet_dropdown.bind("<<ComboboxSelected>>", on_sheet_select)
 
+# Create a custom style for the "Add" button to show focus highlighting
+style.configure("Highlight.TButton", background="yellow", foreground="black")
+
 # Insert Row button (Inside Widgets Frame)
-btn_row = ttk.Button(widgets_frame, text="Add", command=lambda: insert_row(column_to_widget_mapping), takefocus=1)
+btn_row = ttk.Button(widgets_frame, text="Add", command=insert_row, takefocus=1, style="Highlight.TButton")
 btn_row.grid(row=4, column=3, sticky="nsew")
+
+# Bind focus events to the "Add" button
+btn_row.bind("<FocusIn>", on_add_button_focus)
+btn_row.bind("<FocusOut>", on_add_button_focus_out)
 
 
 ################## TreeView / Excel LabelFrame ####################################
@@ -249,5 +254,3 @@ treeView.bind("<<ListboxSelect>>", lambda x: selected())
 check_date.focus_set()
 
 root.mainloop()
-"""_summary_
-"""
