@@ -1,15 +1,19 @@
 import tkinter as tk
+from tkinter import filedialog
 from openpyxl import load_workbook
 
 def load_excel_file():
-    filename = entry.get()
-    workbook = load_workbook(filename)
-    sheet_names = workbook.sheetnames
+    file_path = filedialog.askopenfilename(filetypes=[("Excel Files", "*.xlsx *.xlsm")])
+    if file_path:
+        entry.delete(0, tk.END)
+        entry.insert(0, file_path)
+        workbook = load_workbook(file_path)
+        sheet_names = workbook.sheetnames
 
-    for idx, sheet_name in enumerate(sheet_names):
-        tk.Radiobutton(root, text=sheet_name, variable=sheet_var, value=idx).pack(anchor=tk.W)
+        for idx, sheet_name in enumerate(sheet_names):
+            tk.Radiobutton(root, text=sheet_name, variable=sheet_var, value=idx).pack(anchor=tk.W)
 
-    btn_select.config(state=tk.NORMAL)
+        btn_select.config(state=tk.NORMAL)
 
 def select_sheet():
     selected_sheet_index = sheet_var.get()
