@@ -126,7 +126,7 @@ def on_leave(e):
    button.config(background= 'SystemButtonFace', foreground= 'black')
 
 # Button that calls the insert_row() above
-button = ttk.Button(widgets_frame, text="Insert", command=insert_row)
+button = ttk.Button(widgets_frame, text="Insert", command=insert_row, takefocus=1) #############
 button.grid(row=4, column=3, sticky="nsew")
 
 # Binding the hover events to the Button
@@ -142,7 +142,7 @@ button.bind('<Leave>', on_leave)
 ### This is where the preview of the excel file's data will be displayed
 
 ### Display Frame
-treeFrame = ttk.Frame(outer_frame)
+treeFrame = ttk.Frame(outer_frame, takefocus=0)
 treeFrame.grid(row=5, column=0, pady=10)
 treeScroll = ttk.Scrollbar(treeFrame)
 treeScroll.pack(side="right", fill="y") # this sets the scrollbar to the right side of the frame,
@@ -201,7 +201,7 @@ def toggle_mode():
         style.theme_use("forest-dark")
 
 mode_switch = ttk.Checkbutton(outer_frame, text="Mode", style="Switch",
-    command=toggle_mode) # this triggers the toggle_mode function above
+    command=toggle_mode, takefocus=0) # this triggers the toggle_mode function above
 mode_switch.grid(row=4, column=1, padx=5, pady=10, sticky="nsew")
 
 
