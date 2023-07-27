@@ -219,10 +219,7 @@ sheet_dropdown.grid(row=4, column=5, padx=10, pady=5)
 sheet_dropdown.bind("<<ComboboxSelected>>", on_sheet_select)
 
 # Insert Row button (Inside Widgets Frame)
-btn_row = tk.Button(widgets_frame, text="Phat_05", command=lambda: insert_row(),
-                    relief="raised", activeforeground="White", activebackground="#bdb9ae",
-                    highlightcolor="green", highlightbackground="red", font="Andalus",
-                    takefocus=1)
+btn_row = tk.Button(widgets_frame, text="Boss Phat_05 sakalam!", command=lambda: insert_row(), takefocus=1)
 btn_row.grid(row=4, column=3, sticky="nsew")
 
 
