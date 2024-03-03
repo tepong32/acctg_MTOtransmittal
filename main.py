@@ -83,6 +83,7 @@ def insert_row():
     dvNumber = dv_number.get()
     checkParticulars = check_particulars.get()
     checkAmount = check_amount.get()
+    checkPayee = check_payee.get()
     checkStatus = check_status_dropdown.get()
 
     # Get the selected sheet from the workbook
@@ -91,7 +92,7 @@ def insert_row():
     sheet = workbook[current_sheet]
     
     # Insert the row to the selected sheet in the workbook
-    row_values = [checkDate, checkNumber, dvNumber, checkParticulars, checkAmount, checkStatus]
+    row_values = [checkDate, checkNumber, dvNumber, checkParticulars, checkAmount, checkPayee, checkStatus]
     sheet.append(row_values)
     workbook.save(path)
 
@@ -107,6 +108,7 @@ def insert_row():
     dv_number.delete(0, "end")
     check_particulars.delete(0, "end")
     check_amount.delete(0, "end")
+    checkPayee.delete(0, "end")
     check_status_dropdown.set(status_list[0])
     
     # Highlight or select the last inserted row in the TreeView
@@ -160,23 +162,26 @@ outer_frame.pack()
 widgets_frame = ttk.LabelFrame(outer_frame, text="Widgets Frame")
 widgets_frame.grid(row=0, column=0, padx=20, pady=10) # padding on x & y axis
 
-w00 = ttk.Label(widgets_frame, text="Check Date")
+w00 = ttk.Label(widgets_frame, )
 w00.grid(row=0, column=0)
 
-w01 = ttk.Label(widgets_frame, text="Check #")
+w01 = ttk.Label(widgets_frame, )
 w01.grid(row=0, column=1)
 
-w02 = ttk.Label(widgets_frame, text="DV #")
+w02 = ttk.Label(widgets_frame, )
 w02.grid(row=0, column=2)
 
-w03 = ttk.Label(widgets_frame, text="Particulars")
+w03 = ttk.Label(widgets_frame, )
 w03.grid(row=0, column=3)
 
-w04 = ttk.Label(widgets_frame, text="Amount")
+w04 = ttk.Label(widgets_frame, )
 w04.grid(row=0, column=4)
 
-w05 = ttk.Label(widgets_frame, text="Status")
+w05 = ttk.Label(widgets_frame, )
 w05.grid(row=0, column=5)
+
+w06 = ttk.Label(widgets_frame, )
+w06.grid(row=0, column=6)
 
 
 check_date = ttk.Entry(widgets_frame, width=10)
@@ -196,14 +201,17 @@ check_particulars.grid(row=1, column=3,padx=5, pady=(0,5), sticky="ew")
 check_amount = ttk.Entry(widgets_frame, width=20)
 check_amount.grid(row=1, column=4,padx=5, pady=(0,5), sticky="ew")
 
+check_payee = ttk.Entry(widgets_frame, width=20)
+check_payee.grid(row=1, column=5,padx=5, pady=(0,5), sticky="ew")
+
 status_list = ["Paid", "Cancelled", "Stale"]
 check_status_dropdown = ttk.Combobox(widgets_frame, values=status_list)
 check_status_dropdown.current(0) # default selected value
-check_status_dropdown.grid(row=1, column=5,padx=5, pady=(0,5), sticky="ew")
+check_status_dropdown.grid(row=1, column=6,padx=5, pady=(0,5), sticky="ew")
 
 # Select File Button
 btn_load = ttk.Button(widgets_frame, text="Load Excel File", command=load_excel_file, takefocus=0)
-btn_load.grid(row=0, column=6, padx=5, pady=(0, 5), sticky="ew")
+btn_load.grid(row=0, column=7, padx=5, pady=(0, 5), sticky="ew")
 
 # Select Sheet Button (Inside Widgets Frame)
 def select_sheet():
@@ -219,7 +227,7 @@ sheet_dropdown.grid(row=4, column=5, padx=10, pady=5)
 sheet_dropdown.bind("<<ComboboxSelected>>", on_sheet_select)
 
 # Insert Row button (Inside Widgets Frame)
-btn_row = tk.Button(widgets_frame, text="Phat_05", command=lambda: insert_row(),
+btn_row = tk.Button(widgets_frame, text="Insert", command=lambda: insert_row(),
                     relief="raised", activeforeground="White", activebackground="#bdb9ae",
                     highlightcolor="green", highlightbackground="red", font="Andalus",
                     takefocus=1)
@@ -244,6 +252,7 @@ treeView.column("Check Date", width=100)
 treeView.column("Check #", width=100)
 treeView.column("DV #", width=100)
 treeView.column("Particulars", width=200)
+treeView.column("DV #", width=100)
 treeView.column("Amount", width=100)
 treeView.column("Status", width=80)
 treeView.pack()
