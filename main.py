@@ -108,7 +108,7 @@ def insert_row():
     dv_number.delete(0, "end")
     check_particulars.delete(0, "end")
     check_amount.delete(0, "end")
-    checkPayee.delete(0, "end")
+    check_payee.delete(0, "end")
     check_status_dropdown.set(status_list[0])
     
     # Highlight or select the last inserted row in the TreeView
